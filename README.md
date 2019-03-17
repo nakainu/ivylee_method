@@ -1,6 +1,6 @@
 # syukatsu_note_app
 
-> A Vue.js project
+> Vue.jsとFirebaseでサンプルWebアプリケーションを作ってみる
 
 ## Build Setup
 
