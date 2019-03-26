@@ -1,13 +1,12 @@
 <template>
 <div class="hello">
   <h1>{{ msg }}</h1>
-  <h2>Note</h2>
   <div>
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="Activity name">
+      <el-form-item label="Company name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
-      <el-form-item label="Activity form">
+      <el-form-item label="Note">
         <el-input type="textarea" v-model="form.desc"></el-input>
       </el-form-item>
       <el-form-item>
@@ -17,6 +16,17 @@
     </el-form>
   </div>
 
+  <div>
+    <el-card class="box-card" v-for="noteName of notes" v-bind:key="noteName['.key']">
+      <div slot="header" class="clearfix">
+        <span>{{ noteName.name }}</span>
+        <el-button style="float: right; padding: 3px 0" type="text">Operation button</el-button>
+      </div>
+      <div class="text item">
+        {{ noteName.desc }}
+      </div>
+    </el-card>
+  </div>
   <button @click="signOut">Sign out</button>
 </div>
 </template>
@@ -28,11 +38,45 @@ export default {
   name: 'HelloWorld',
   data() {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      msg: 'Note App',
+      database: null,
+      notesRef: null,
       name: firebase.auth().currentUser.email,
       form: {
         name: '',
         desc: ''
+      },
+      showNoteType: 'all',
+      activeNames: ['1'],
+      notes: []
+    };
+  },
+  created: function() {
+    this.database = firebase.database();
+    this.notesRef = this.database.ref('notes');
+
+    var _this = this;
+    this.notesRef.on('value', function(snapshot) {
+      _this.notes = snapshot.val(); // データに変化があったときに再取得
+    });
+  },
+  computed: {
+    filteredNotes: function() {
+      if (this.showNoteType == 'all'){
+        return this.notes;
+      } else {
+        var showIsComplate = false;
+        if(this.showNoteType == 'complete'){
+          showIsComplate = true
+        }
+        var filterNotes ={};
+        for (var key in this.notes) {
+          var note = this.notes[key];
+          if (note.isComplete == showIsComplate) {
+            filterNotes[key] = note;
+          }
+        }
+        return filterNotes;
       }
     }
   },
@@ -42,8 +86,23 @@ export default {
         this.$router.push('/signin')
       })
     },
-    onSubmit() {
-      console.log('submit');
+    onSubmit: function() {
+      if (this.form.name == ""){
+        return;
+      }
+      if (this.form.desc == ""){
+        return;
+      }
+      this.notesRef.push({
+        name: this.form.name,
+        desc: this.form.desc,
+        isComplete: false,
+      })
+      this.form.name = '';
+      this.form.desc = '';
+    },
+    handleChange(val) {
+      console.log(val);
     }
   }
 }
@@ -68,5 +127,26 @@ li {
 
 a {
   color: #42b983;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
+
+.box-card {
+  width: 480px;
 }
 </style>
