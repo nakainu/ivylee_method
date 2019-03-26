@@ -1,4 +1,4 @@
-# syukatsu_note_app
+# note_app
 
 > Vue.jsとFirebaseでサンプルWebアプリケーションを作ってみる
 
