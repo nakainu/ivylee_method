@@ -3,7 +3,7 @@
   <h1>{{ msg }}</h1>
   <div class="form">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="Company name">
+      <el-form-item label="Title">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
       <el-form-item label="Note">
@@ -11,20 +11,20 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="createNote">Create</el-button>
-        <el-button>Cancel</el-button>
+        <el-button @click="cancelNote">Cancel</el-button>
       </el-form-item>
     </el-form>
   </div>
 
   <div class="card box">
-    <el-card class="card_item" v-for="noteName of notes" v-bind:key="noteName['.key']">
+    <el-card class="card_item" v-for="(note, key) in filteredNotes">
       <div slot="header" class="clearfix">
-        <span>{{ noteName.name }}</span>
-        <el-button style="float: right; padding: 3px 0" type="text">edit</el-button>
-        <el-button style="float: right; padding: 3px 0" type="text">del</el-button>
+        <span>{{ note.name }}</span>
+        <!-- <el-button style="float: right; padding: 3px 0" type="text">edit</el-button> -->
+        <el-button @click="deleteNote(key)" style="float: right; padding: 3px 0" type="text">delete</el-button>
       </div>
       <div class="text item">
-        {{ noteName.desc }}
+        {{ note.desc }}
       </div>
     </el-card>
   </div>
@@ -102,8 +102,12 @@ export default {
       this.form.name = '';
       this.form.desc = '';
     },
-    handleChange(val) {
-      console.log(val);
+    cancelNote: function(){
+      this.form.name = "";
+      this.form.desc = "";
+    },
+    deleteNote: function(key) {
+      this.notesRef.child(key).remove();
     }
   }
 }
