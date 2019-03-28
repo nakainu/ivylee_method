@@ -16,20 +16,29 @@
     </el-form>
   </div>
 
+
   <div class="card box">
     <el-card class="card_item" v-for="(note, key) in filteredNotes">
-      <div slot="header" class="clearfix">
-        <span>{{ note.name }}</span>
-        <!-- <el-button style="float: right; padding: 3px 0" type="text">edit</el-button> -->
-        <el-button @click="deleteNote(key)" style="float: right; padding: 3px 0" type="text">delete</el-button>
+      <div v-if="!note.edit" slot="header" class="clearfix">
+        <span @click="setEditNote(key)">{{ note.name }}</span>
+        <el-button @click="deleteNote(key)" type="primary" icon="el-icon-delete" style="float: right; padding: 3px"></el-button>
       </div>
-      <div class="text item">
+      <div v-else slot="header" class="clearfix">
+        <span><el-input type="text" v-model="note.name"></el-input></span>
+      </div>
+      <div v-if="!note.edit" @click="setEditNote(key)" class="text item">
         {{ note.desc }}
+      </div>
+      <div v-else class="text item">
+        <el-input type="textarea" v-model="note.desc"></el-input>
+        <el-button @click="saveEditNote(note, key)" type="success" icon="el-icon-check" circle style="float: right; padding: 3px; margin: 10px"></el-button>
       </div>
     </el-card>
   </div>
-  <button @click="signOut">Sign out</button>
+
+  <el-button type="info" @click="signOut">Sign out</el-button>
 </div>
+
 </template>
 
 <script>
@@ -98,6 +107,7 @@ export default {
         name: this.form.name,
         desc: this.form.desc,
         isComplete: false,
+        edit: false
       })
       this.form.name = '';
       this.form.desc = '';
@@ -108,6 +118,18 @@ export default {
     },
     deleteNote: function(key) {
       this.notesRef.child(key).remove();
+    },
+    setEditNote(key) {
+      this.notesRef.child(key).update({
+        edit: true
+      })
+    },
+    saveEditNote(note, key) {
+      this.notesRef.child(key).set({
+        name: note.name,
+        desc: note.desc,
+        edit:false
+      })
     }
   }
 }
