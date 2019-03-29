@@ -1,15 +1,17 @@
 <template>
-  <div class="signin">
-    <h2>Sign in</h2>
-    <input type="text" placeholder="Username" v-model="username">
-    <input type="password" placeholder="Password" v-model="password">
+<div class="signin">
+  <h2>Sign in</h2>
+  <el-form>
+    <el-input type="text" placeholder="Username" v-model="username"></el-input>
+    <el-input type="password" placeholder="Password" v-model="password"></el-input>
+  </el-form>
 
-    <button @click="signIn">ログイン</button>
+  <el-button type="info" @click="signIn">ログイン</el-button>
 
-    <p>アカウントをお持ちでない方はこちら
-      <router-link to="/signup">sign up</router-link>
-    </p>
-  </div>
+  <p>アカウントをお持ちでない方はこちら
+    <router-link to="/signup">sign up</router-link>
+  </p>
+</div>
 </template>
 
 <script>
@@ -26,21 +28,21 @@ export default {
   methods: {
     signIn: function() {
       firebase.auth().signInWithEmailAndPassword(this.username, this.password)
-      .then(user => {
-        alert('sign inに成功しました')
-        this.$router.push('/')
-      },
-      error => {
-        alert(error.message)
-      })
+        .then(user => {
+            alert('sign inに成功しました')
+            this.$router.push('/')
+          },
+          error => {
+            alert(error.message)
+          })
     }
   }
 }
-
 </script>
 
 <style scope>
-h1, h2 {
+h1,
+h2 {
   font-weight: nomal;
 }
 

@@ -1,10 +1,13 @@
 <template>
   <div class="signup">
     <h2>Sign up</h2>
-    <input type="text" placeholder="Username" v-model="username">
-    <input type="password" placeholder="Password" v-model="password">
 
-    <button @click="signUp">登録</button>
+    <el-form>
+      <el-input type="text" placeholder="Username" v-model="username"></el-input>
+      <el-input type="password" placeholder="Password" v-model="password"></el-input>
+    </el-form>
+
+    <el-button type="info" @click="signUp">登録</el-button>
 
     <p>既にアカウントをお持ちの方はおこちら
       <router-link to="/signin">sign in</router-link>
